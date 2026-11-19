@@ -10,6 +10,8 @@ Estimating who a marketing campaign actually persuades. We reproduce **CausalPFN
 | [Linear backlog](docs/LINEAR_BACKLOG.md) | Milestones and issues to create in Linear |
 | [Data contracts](docs/DATA_CONTRACTS.md) | Shared file formats and Snowflake layout |
 | [Setup](docs/SETUP.md) | Local env, Snowflake, dbt, GPU server |
+| [Work division](docs/WORK_DIVISION.md) | Tasks, handoffs, and backups for each of the 5 roles |
+| [Literature review](literature-review/README.md) | Reading list, template, one folder per member |
 | [Contributing](CONTRIBUTING.md) | Linear + GitHub workflow, rules |
 
 ## Repository layout
