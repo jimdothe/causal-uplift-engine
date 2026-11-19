@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: stg_hillstrom
+    description: Typed Hillstrom e-mail experiment, one row per customer.
+    tests:
+      - row_count_equals:
+          expected: 64000
+    columns:
+      - name: row_id
+        tests: [not_null, unique]
+      - name: segment
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["Mens E-Mail", "Womens E-Mail", "No E-Mail"]
+      - name: visit
+        tests:
+          - not_null
+          - accepted_values: {values: [0, 1], quote: false}
+      - name: conversion
+        tests:
+          - accepted_values: {values: [0, 1], quote: false}
+      - name: mens
+        tests:
+          - accepted_values: {values: [0, 1], quote: false}
+      - name: womens
+        tests:
+          - accepted_values: {values: [0, 1], quote: false}
+
+  - name: stg_criteo
+    description: Typed Criteo uplift 10% sample, one row per user.
+    columns:
+      - name: row_id
+        tests: [not_null, unique]
+      - name: treatment
+        tests:
+          - not_null
+          - accepted_values: {values: [0, 1], quote: false}
+      - name: exposure
+        tests:
+          - accepted_values: {values: [0, 1], quote: false}
+      - name: visit
+        tests:
+          - not_null
+          - accepted_values: {values: [0, 1], quote: false}

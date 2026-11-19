@@ -1,0 +1,25 @@
+# Model 1: retrieval uplift transformer. Starting values; Optuna updates these (CUE M5).
+model:
+  d_model: 64
+  n_layers: 3
+  n_heads: 4
+  dropout: 0.1
+  retrieval: false          # false = M1a, true = M1b
+  k_treated: 32
+  k_control: 32
+  retrieval_space: raw      # raw | learned
+  refresh_every_epochs: 2   # only for learned retrieval
+
+train:
+  batch_size: 1024
+  lr: 3.0e-4
+  weight_decay: 1.0e-5
+  max_epochs: 30
+  early_stopping_metric: val_qini
+  patience: 5
+  control_weight: auto      # auto = n_treated / n_control
+  seeds: [0, 1, 2]
+
+tuning:
+  subset_rows: 500000
+  n_trials: 20

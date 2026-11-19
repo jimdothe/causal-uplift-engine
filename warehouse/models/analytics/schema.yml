@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: hillstrom_randomization_check
+    description: SMD per feature for each e-mail arm vs. no e-mail. Fails the build if any |smd| >= 0.05.
+    tests:
+      - smd_below:
+          threshold: 0.05

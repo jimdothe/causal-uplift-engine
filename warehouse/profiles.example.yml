@@ -1,0 +1,28 @@
+# Copy to ~/.dbt/profiles.yml and edit. Never commit the real file.
+causal_uplift:
+  target: dev
+  outputs:
+    dev:            # your personal schemas, e.g. DEV_YASHASHREE_STAGING
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
+      role: UPLIFT_DEV
+      warehouse: UPLIFT_WH
+      database: CAUSAL_UPLIFT
+      schema: "DEV_{{ env_var('USER') | upper }}"
+      threads: 4
+    ci:             # used by GitHub Actions; writes the shared schemas
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      private_key: "{{ env_var('SNOWFLAKE_PRIVATE_KEY') }}"
+      role: UPLIFT_PIPELINE
+      warehouse: UPLIFT_WH
+      database: CAUSAL_UPLIFT
+      schema: PUBLIC
+      threads: 4
+    duckdb:         # fallback if Snowflake is unavailable; reads raw Parquet directly
+      type: duckdb
+      path: "{{ env_var('DATA_DIR', './data') }}/causal_uplift.duckdb"
+      threads: 4

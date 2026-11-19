@@ -1,0 +1,37 @@
+# Data and outputs (never commit; Criteo is CC BY-NC-SA)
+data/
+outputs/
+wandb/
+*.parquet
+*.npy
+*.npz
+*.csv
+*.csv.gz
+
+# Secrets
+.env
+*.p8
+*.pem
+rsa_key*
+profiles.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# dbt
+warehouse/target/
+warehouse/dbt_packages/
+warehouse/logs/
+*.duckdb
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

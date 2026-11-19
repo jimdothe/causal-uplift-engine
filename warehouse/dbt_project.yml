@@ -1,0 +1,20 @@
+name: causal_uplift
+version: "0.1.0"
+config-version: 2
+profile: causal_uplift
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  causal_uplift:
+    +materialized: table
+    staging:
+      +schema: staging
+    validated:
+      +schema: validated
+    analytics:
+      +schema: analytics

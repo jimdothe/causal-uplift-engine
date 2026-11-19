@@ -1,0 +1,44 @@
+# Matches the CausalPFN authors' setup (notebooks/qini.ipynb, benchmarks/*.py at commit b7ed2f1).
+seed: 82718
+n_folds: 5
+
+datasets:
+  hillstrom:
+    loader: sklift.datasets.fetch_hillstrom
+    expected_rows: 64000
+  criteo:
+    loader: sklift.datasets.fetch_criteo
+    loader_kwargs:
+      percent10: true
+    expected_rows: null   # record on first extract; paper reports ~2.5M
+
+tasks:
+  hill_womens_vs_none:   # code's "Hill (1)"; paper text labels differ, always report by arm name
+    dataset: hillstrom
+    outcome: visit
+    control_arm: "No E-Mail"
+    treatment_arm: "Womens E-Mail"
+  hill_mens_vs_none:     # code's "Hill (2)"
+    dataset: hillstrom
+    outcome: visit
+    control_arm: "No E-Mail"
+    treatment_arm: "Mens E-Mail"
+  criteo_sub50k:
+    dataset: criteo
+    outcome: visit
+    treatment: treatment   # never "exposure"
+    subsample_max_rows: 50000
+  criteo_full:
+    dataset: criteo
+    outcome: visit
+    treatment: treatment
+    subsample_max_rows: null
+
+paper_targets:   # normalized Qini, CausalPFN (best method = 1.000)
+  table2:
+    hill_arm1: 0.992
+    hill_arm2: 0.968
+    criteo_sub50k: 0.859
+  table7:
+    criteo_full: 0.939
+  tolerance: 0.03

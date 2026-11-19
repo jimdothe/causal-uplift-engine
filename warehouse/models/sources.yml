@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: raw
+    database: CAUSAL_UPLIFT
+    schema: RAW
+    description: Exact copies of raw Parquet loaded by pipeline/load_snowflake.py
+    tables:
+      - name: hillstrom
+        identifier: HILLSTROM
+        meta:
+          external_location: "{{ env_var('DATA_DIR', './data') }}/raw/hillstrom/hillstrom.parquet"   # duckdb target
+      - name: criteo
+        identifier: CRITEO
+        meta:
+          external_location: "{{ env_var('DATA_DIR', './data') }}/raw/criteo/criteo.parquet"         # duckdb target
