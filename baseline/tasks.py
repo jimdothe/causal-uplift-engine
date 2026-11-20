@@ -5,6 +5,14 @@ from __future__ import annotations
 SEED = 82718
 N_FOLDS = 5
 
+# Expected rows per task (paper Appendix D.6 and the Hillstrom arm sizes). Used for a warning only.
+EXPECTED_ROWS = {
+    "hill_womens_vs_none": 42_693,
+    "hill_mens_vs_none": 42_613,
+    "criteo_sub50k": 50_000,
+    "criteo_full": 2_500_000,  # "2.5M stratified subset from sklift"
+}
+
 # Task name → (dataset, constructor kwargs, paper column)
 TASKS = {
     # Code's "Hill (1)" and "Hill (2)". The paper text labels the arms the other way round,

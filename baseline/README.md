@@ -9,7 +9,7 @@ Reproduces paper Tables 2 and 7 (normalized Qini) separately for **Hillstrom** a
 | Hillstrom | `hill_womens_vs_none` | Table 2, Hill(1) | ~42.7k (two arms) | 0.992 |
 | Hillstrom | `hill_mens_vs_none` | Table 2, Hill(2) | ~42.6k (two arms) | 0.968 |
 | Criteo | `criteo_sub50k` | Table 2, Criteo | 50,000 | 0.859 |
-| Criteo | `criteo_full` (`--include-full`) | Table 7, Criteo | full 10% sample | 0.939 |
+| Criteo | `criteo_full` (`--include-full`) | Table 7, Criteo | full 10% sample (paper: ~2.5M) | 0.939 |
 
 Methods per task: CausalPFN, X-, S-, DA-, T-Learner (EconML, `hpo=False`), each on the same 5 folds (seed 82718). Normalization divides by the best method in each task, so **all five methods must run** for the normalized numbers to be comparable with the paper.
 
@@ -36,6 +36,7 @@ Re-running skips finished folds. To run one piece: `python -m baseline.run --tas
 
 ## Decisions and known issues
 
+- **Row count:** each task prints its number of rows and warns if it differs from the expected count by more than 5% (Hillstrom arms: 42,693 and 42,613; Criteo full: the paper's ~2.5M). Record any warning in TEA-6, because a different sample size can explain a gap with the paper.
 - **Pinned source `7da4afa` (Feb 2026), not the latest `b7ed2f1`.** The September 2026 release (0.1.5) replaced FAISS and changed how context rows are chosen on large tables ("prevent duplicate context rows"). That can change full-Criteo results, so we use the version closest to the paper. Running at `b7ed2f1` as a second check is useful.
 - **Arm labels:** the code's Hill(1) is women's e-mail vs. none; the paper text says men's. We name tasks by arm.
 - **Comparison methods use random forests without a fixed seed** (authors' code), so their scores vary slightly between runs. This moves CausalPFN's normalized score too. Report raw Qini alongside.

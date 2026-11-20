@@ -24,7 +24,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from baseline.tasks import DATASET_TASKS, SEED, TASKS, build
+from baseline.tasks import DATASET_TASKS, EXPECTED_ROWS, SEED, TASKS, build
 
 METHODS = ["causalpfn", "x_learner", "s_learner", "da_learner", "t_learner"]
 MAX_CONTEXT = 50_000  # notebooks/qini.ipynb uses 50,000 for all marketing tasks
@@ -75,6 +75,13 @@ def run_task(task: str, methods: list[str], out_dir: Path, device: str) -> None:
     learners = make_learners()
     n_rows = len(dataset.all_X)
     print(f"rows={n_rows:,} treated={dataset.all_t.mean():.3f} outcome_rate={dataset.all_y.mean():.4f}")
+    expected = EXPECTED_ROWS[task]
+    if abs(n_rows - expected) / expected > 0.05:
+        print(
+            f"WARNING: {n_rows:,} rows, expected ~{expected:,}. "
+            "Record this in TEA-6; it can explain a gap with the paper.",
+            flush=True,
+        )
 
     for method in methods:
         for k in range(len(dataset)):
