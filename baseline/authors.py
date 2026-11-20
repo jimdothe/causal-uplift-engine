@@ -1,6 +1,6 @@
 """Import the CausalPFN authors' code from the pinned submodule (third_party/CausalPFN).
 
-We load `benchmarks.hillstrom`, `benchmarks.criteo`, and `benchmarks.baselines.econml` without running
+We load `benchmarks.criteo` and `benchmarks.baselines.econml` without running
 the packages' __init__ files. Those import every benchmark (ACIC, IHDP, RealCause, BART, CATENet, GRF)
 and would pull in R, JAX, and other dependencies we don't need for the uplift reproduction.
 """
@@ -32,13 +32,12 @@ def _setup() -> None:
         sys.path.insert(0, src)
 
 
-def datasets():
-    """Return (HillstromDataset, CriteoDataset) from the authors' code."""
+def criteo_dataset():
+    """Return CriteoDataset from the authors' code (loads sklift's 10% Criteo sample)."""
     _setup()
     from benchmarks.criteo import CriteoDataset
-    from benchmarks.hillstrom import HillstromDataset
 
-    return HillstromDataset, CriteoDataset
+    return CriteoDataset
 
 
 def learners() -> dict:

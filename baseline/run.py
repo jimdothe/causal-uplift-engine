@@ -1,10 +1,9 @@
-"""Run CausalPFN and the four comparison learners on one dataset, fold by fold.
+"""Run CausalPFN and the four comparison learners on Criteo, fold by fold.
 
 Usage (on the GPU server):
-    python -m baseline.run --dataset hillstrom
-    python -m baseline.run --dataset criteo                 # 50k subsample only
-    python -m baseline.run --dataset criteo --include-full  # also the full table (Table 7; slow)
-    python -m baseline.run --task hill_mens_vs_none --methods causalpfn
+    python -m baseline.run                                  # 50k subsample (Table 2)
+    python -m baseline.run --include-full                   # also the full table (Table 7; slow)
+    python -m baseline.run --task criteo_full --methods causalpfn
 
 Each fold's predictions go to outputs/predictions/<method>/<task>/seed82718_fold<k>.parquet.
 Finished folds are skipped, so an interrupted run can be restarted with the same command.
@@ -24,7 +23,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from baseline.tasks import DATASET_TASKS, SEED, TASKS, build
+from baseline.tasks import PAPER_FULL_ROWS, SEED, TASKS, build
 
 METHODS = ["causalpfn", "x_learner", "s_learner", "da_learner", "t_learner"]
 MAX_CONTEXT = 50_000  # notebooks/qini.ipynb uses 50,000 for all marketing tasks
@@ -75,6 +74,12 @@ def run_task(task: str, methods: list[str], out_dir: Path, device: str) -> None:
     learners = make_learners()
     n_rows = len(dataset.all_X)
     print(f"rows={n_rows:,} treated={dataset.all_t.mean():.3f} outcome_rate={dataset.all_y.mean():.4f}")
+    if task == "criteo_full" and abs(n_rows - PAPER_FULL_ROWS) / PAPER_FULL_ROWS > 0.05:
+        print(
+            f"WARNING: {n_rows:,} rows, paper reports ~{PAPER_FULL_ROWS:,}. "
+            "Record this in TEA-6; it can explain a gap with Table 7.",
+            flush=True,
+        )
 
     for method in methods:
         for k in range(len(dataset)):
@@ -119,9 +124,7 @@ def run_task(task: str, methods: list[str], out_dir: Path, device: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--dataset", choices=sorted(DATASET_TASKS))
-    group.add_argument("--task", choices=sorted(TASKS))
+    parser.add_argument("--task", choices=sorted(TASKS), help="run one task only")
     parser.add_argument("--include-full", action="store_true", help="also run criteo_full (Table 7)")
     parser.add_argument("--methods", nargs="+", choices=METHODS, default=METHODS)
     parser.add_argument("--device", default="auto", help="auto | cuda:0 | cpu")
@@ -131,7 +134,7 @@ def main() -> None:
     if args.task:
         tasks = [args.task]
     else:
-        tasks = [t for t in DATASET_TASKS[args.dataset] if t != "criteo_full" or args.include_full]
+        tasks = ["criteo_sub50k"] + (["criteo_full"] if args.include_full else [])
 
     _set_seeds()
     device = _device(args.device)

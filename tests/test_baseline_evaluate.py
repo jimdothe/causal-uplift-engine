@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from baseline.evaluate import score_task, to_markdown
-from baseline.tasks import DATASET_TASKS, PAPER, SEED, TASKS
+from baseline.tasks import PAPER, SEED, TASKS
 
 
 def _write_fake_predictions(root, task, methods, n=2000, seed=0):
@@ -34,24 +34,23 @@ def _write_fake_predictions(root, task, methods, n=2000, seed=0):
 
 def test_best_method_normalized_to_one(tmp_path):
     methods = ["causalpfn", "s_learner", "t_learner"]
-    _write_fake_predictions(tmp_path, "hill_womens_vs_none", methods)
-    table = score_task(tmp_path, "hill_womens_vs_none")
+    _write_fake_predictions(tmp_path, "criteo_sub50k", methods)
+    table = score_task(tmp_path, "criteo_sub50k")
     assert set(table["method"]) == set(methods)
     assert table["qini_normalized"].max() == pytest.approx(1.0)
     assert (table["n_test_rows"] == 2000).all()
-    assert "Hill(1)" in to_markdown("hillstrom", table)
+    md = to_markdown(table)
+    assert "Table 2" in md and "0.859" in md
 
 
 def test_incomplete_folds_are_skipped(tmp_path):
-    _write_fake_predictions(tmp_path, "criteo_sub50k", ["causalpfn"])
-    (tmp_path / "predictions" / "causalpfn" / "criteo_sub50k" / f"seed{SEED}_fold4.parquet").unlink()
-    assert score_task(tmp_path, "criteo_sub50k").empty
+    _write_fake_predictions(tmp_path, "criteo_full", ["causalpfn"])
+    (tmp_path / "predictions" / "causalpfn" / "criteo_full" / f"seed{SEED}_fold4.parquet").unlink()
+    assert score_task(tmp_path, "criteo_full").empty
 
 
 def test_paper_targets_cover_every_task():
-    tasks = {t for table in PAPER.values() for t in table}
-    assert tasks == set(TASKS)
-    assert {t for ts in DATASET_TASKS.values() for t in ts} == set(TASKS)
-    for table in PAPER.values():
-        for scores in table.values():
-            assert max(scores.values()) == 1.0  # paper normalizes the best method to 1.000
+    assert set(PAPER) == set(TASKS) == {"criteo_sub50k", "criteo_full"}
+    for scores in PAPER.values():
+        assert max(scores.values()) == 1.0  # paper normalizes the best method to 1.000
+        assert set(scores) == {"causalpfn", "x_learner", "s_learner", "da_learner", "t_learner"}
