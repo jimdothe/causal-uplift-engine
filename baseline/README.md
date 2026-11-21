@@ -32,6 +32,8 @@ Outputs:
 - Run metadata: `outputs/predictions/<task>_run.json`
 - Results: `reports/baseline_hillstrom.md|csv`, `reports/baseline_criteo.md|csv` (commit these)
 
+**Jupyter instead of scripts:** open `notebooks/baseline_hillstrom.ipynb` or `notebooks/baseline_criteo.ipynb`. Each runs one dataset, shows progress, the comparison with the paper, and Qini curves in the notebook, and keeps its predictions in its own folder (`outputs/hillstrom/`, `outputs/criteo/`). They work in local Jupyter, on the college server, and on Colab/Kaggle (they clone the repo there).
+
 Re-running skips finished folds. To run one piece: `python -m baseline.run --task criteo_full --methods causalpfn`.
 
 ## Decisions and known issues
